@@ -1,7 +1,9 @@
 package com.utadeo.taskapp.service;
 
 import java.util.List;
+
 import org.springframework.stereotype.Service;
+
 import com.utadeo.taskapp.model.User;
 import com.utadeo.taskapp.repository.IUserRepository;
 
@@ -25,6 +27,7 @@ public class UserServiceImplementation implements IUserService{
             user.setId(id);
             return this.userRepository.save(user);
         }
+
         return null;
     }
 

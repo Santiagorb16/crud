@@ -1,21 +1,18 @@
 package com.utadeo.taskapp.controller;
 
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import com.utadeo.taskapp.dto.ApiResponse;
 import com.utadeo.taskapp.model.User;
 import com.utadeo.taskapp.service.IUserService;
 
 import java.util.List;
 
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.http.HttpStatus;
 
 
 @RestController
+@RequestMapping("user")
 public class UserController {
 
     private IUserService userService;
@@ -24,24 +21,45 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("user/")
-    public User store(@RequestBody User user){
-        return this.userService.createUser(user);
+    @PostMapping
+    public ApiResponse store(@RequestBody User user){
+        
+        User userStore = this.userService.createUser(user);
+        return new ApiResponse(
+            HttpStatus.CREATED.value(),
+            "EL usuario ha sido creado",
+            userStore
+        );
     }
     
-    @PutMapping("user/{id}") 
-    public User update(@PathVariable Long id, @RequestBody User user){
-         return this.userService.updateUser(id, user); }
+    @GetMapping("/{id}")
+    public User getUserById(@PathVariable("id") Long id){
+        return this.userService.getById(id);
+    }
 
-    @GetMapping("user/{id}")
-     public User show(@PathVariable Long id){ 
-        return this.userService.getById(id); }
+    @GetMapping
+    public List<User> getAllUsers() {
+        return userService.getAllUsers();
+    }
 
-    @GetMapping("users")
-     public List<User> index(){ 
-        return this.userService.getAllUsers(); }
+    @PutMapping("/{id}")
+    public ApiResponse updateUser(@PathVariable("id") Long id, @RequestBody User user) {
+        userService.updateUser(id, user);
+        return new ApiResponse(
+                HttpStatus.OK.value(),
+                "El usuario se ha actualizado correctamente",
+                null
+        );
+    }
 
-    @DeleteMapping("user/{id}")
-     public void destroy(@PathVariable Long id){ 
-        this.userService.deleteUser(id); } 
+    @DeleteMapping("/{id}")
+    public ApiResponse deleteUser(@PathVariable("id") Long id) {
+        userService.deleteUser(id);
+        return new ApiResponse(
+                HttpStatus.OK.value(),
+                "El usuario se ha eliminado correctamente",
+                null
+        );
+    }
+
 }
